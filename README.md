@@ -1,2 +1,2 @@
 # brainfuck-interpreter
-Minimal Brainfuck interpreter. Run the binary using "./brainfuck [filename]", or the script using "./brainfuck.rkt [filename]".
+Minimal Brainfuck interpreter. Run the script using "./brainfuck.rkt filename", where filename is the name of a file containing Brainfuck instructions.
