@@ -34,15 +34,8 @@
 (define (tape-read t) (cadr t))
 (define (tape-write t s) (list (car t) s (caddr t)))
 
-(define (tape-left t)
-  (if (null? (car t))
-      #f
-      (list (cdar t) (caar t) (cons (cadr t) (caddr t)))))
-
-(define (tape-right t)
-  (if (null? (caddr t))
-      #f
-      (list (cons (cadr t) (car t)) (caaddr t) (cdaddr t))))
+(define (tape-left t) (list (cdar t) (caar t) (cons (cadr t) (caddr t))))
+(define (tape-right t) (list (cons (cadr t) (car t)) (caaddr t) (cdaddr t)))
 
 (define (inc-cell t)
   (list (car t) (modulo (+ (cadr t) 1) 256) (caddr t)))
