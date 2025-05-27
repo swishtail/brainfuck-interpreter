@@ -1,15 +1,13 @@
 #! /usr/local/bin/racket
 #lang racket/base
 
-(define (file->ins filename)
-  (let ((input-port (open-input-file filename)))
-    (let next-char ((current-char (read-char input-port)))
-      (if (eof-object? current-char)
-          '()
-          (if (memq current-char valid-chars)
-              (cons (char->ins current-char)
-                    (next-char (read-char input-port)))
-              (next-char (read-char input-port)))))))
+(define (file->ins port)
+  (let next-char ((current-char (read-char port)))
+    (cond ((eof-object? current-char) '())
+          ((memq current-char valid-chars)
+           (cons (char->ins current-char)
+                 (next-char (read-char port))))
+          (else (next-char (read-char port))))))
 
 (define valid-chars '(#\> #\< #\+ #\- #\. #\, #\[ #\]))
 
@@ -117,4 +115,5 @@
                                  (cdr rem-ins)))))))))
 
 (run-machine (list->zipper (zeros 30000))
-             (file->ins (vector-ref (current-command-line-arguments) 0)))
+             (call-with-input-file
+               (vector-ref (current-command-line-arguments) 0) file->ins))
