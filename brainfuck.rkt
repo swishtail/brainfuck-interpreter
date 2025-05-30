@@ -4,12 +4,10 @@
 (define (file->ins port)
   (let next-char ((current-char (read-char port)))
     (cond ((eof-object? current-char) '())
-          ((memq current-char valid-chars)
-           (cons (char->ins current-char)
-                 (next-char (read-char port))))
+          ((char->ins current-char)
+           => (lambda (ins)
+                (cons ins (next-char (read-char port)))))
           (else (next-char (read-char port))))))
-
-(define valid-chars '(#\> #\< #\+ #\- #\. #\, #\[ #\]))
 
 (define (char->ins char)
   (cond ((char=? char #\>) tape-right)
@@ -19,7 +17,8 @@
         ((char=? char #\.) tape-print)
         ((char=? char #\,) tape-accept)
         ((char=? char #\[) 'jmp-fwd)
-        ((char=? char #\]) 'jmp-bwd)))
+        ((char=? char #\]) 'jmp-bwd)
+        (else #f)))
 
 (define (list->zipper x)
   (list '() (car x) (cdr x)))
