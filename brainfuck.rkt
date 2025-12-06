@@ -7,7 +7,8 @@
           ((char->ins current-char)
            => (lambda (ins)
                 (cons ins (next-char (read-char port)))))
-          (else (next-char (read-char port))))))
+          (else
+           (next-char (read-char port))))))
 
 (define (char->ins char)
   (cond ((char=? char #\>) tape-right)
@@ -28,11 +29,17 @@
       '()
       (cons 0 (zeros (- n 1)))))
 
-(define (tape-read t) (cadr t))
-(define (tape-write t s) (list (car t) s (caddr t)))
+(define (tape-read t)
+  (cadr t))
 
-(define (tape-left t) (list (cdar t) (caar t) (cons (cadr t) (caddr t))))
-(define (tape-right t) (list (cons (cadr t) (car t)) (caaddr t) (cdaddr t)))
+(define (tape-write t s)
+  (list (car t) s (caddr t)))
+
+(define (tape-left t)
+  (list (cdar t) (caar t) (cons (cadr t) (caddr t))))
+
+(define (tape-right t)
+  (list (cons (cadr t) (car t)) (caaddr t) (cdaddr t)))
 
 (define (inc-cell t)
   (list (car t) (modulo (+ (cadr t) 1) 256) (caddr t)))
@@ -41,7 +48,9 @@
   (list (car t) (modulo (- (cadr t) 1) 256) (caddr t)))
 
 (define (tape-print t)
-  (begin (display (integer->char (tape-read t))) t))
+  (begin
+    (display (integer->char (tape-read t)))
+    t))
 
 (define (tape-accept t)
   (let ((ip-char (read-char)))
@@ -50,10 +59,7 @@
         (tape-write t (char->integer ip-char)))))
 
 (define (make-jmp-alist ins)
-  (let jmp-alist-iter ((alist '())
-                       (stack '())
-                       (ic 0)
-                       (rem-ins ins))
+  (let jmp-alist-iter ((alist '()) (stack '()) (ic 0) (rem-ins ins))
     (cond ((null? rem-ins) alist)
           ((eq? (car rem-ins) 'jmp-fwd)
            (jmp-alist-iter alist
@@ -82,13 +88,12 @@
 
 (define (run-machine data ins)
   (let ((jmp-alist (make-jmp-alist ins)))
-    (let machine-iter ((current-data data)
-                       (ic 0)
-                       (rem-ins ins))
+    (let machine-iter ((current-data data) (ic 0) (rem-ins ins))
       (if (null? rem-ins)
-          (begin (newline)
-                 (display "halt")
-                 (newline))
+          (begin
+            (newline)
+            (display "halt")
+            (newline))
           (let ((current-ins (car rem-ins)))
             (cond ((eq? current-ins 'jmp-fwd)
                    (if (zero? (tape-read current-data))
